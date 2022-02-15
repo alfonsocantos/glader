@@ -2,7 +2,7 @@ PROJECT = github.com/alfonsocantos/glader
 
 GOCMD=go
 
-.PHONY: deps test
+.PHONY: deps test bench
 
 all: test
 
@@ -13,3 +13,7 @@ deps:
 
 test:
 	$(GOCMD) test $(PROJECT)/... -cover
+
+
+bench:
+	$(GOCMD) test -bench=.
