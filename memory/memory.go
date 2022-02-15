@@ -7,15 +7,20 @@ import (
 
 type Glader struct {
 	mem map[string]interface{}
-	ttl map[string]interface{}
+	ttl map[string]time.Time
 
 	lock sync.RWMutex
 }
 
 func New() *Glader {
-	return &Glader{
+
+	g := &Glader{
 		mem: map[string]interface{}{},
+		ttl: map[string]time.Time{},
 	}
+
+	go eraser(g)
+	return g
 }
 
 func (g *Glader) Get(id string) interface{} {
@@ -68,6 +73,23 @@ func (g *Glader) Delete(id string) error {
 	defer g.lock.Unlock()
 
 	delete(g.mem, id)
+	delete(g.ttl, id)
 
 	return nil
+}
+
+func eraser(g *Glader) {
+
+	for {
+		l := g.List()
+		now := time.Now()
+		for _, id := range l {
+			t := g.ttl[id]
+			if now.After(t) {
+				g.Delete(id)
+			}
+		}
+		time.Sleep(1 * time.Second)
+	}
+
 }

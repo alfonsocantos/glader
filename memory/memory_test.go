@@ -3,6 +3,7 @@ package memory
 import (
 	"context"
 	"testing"
+	"time"
 
 	. "github.com/fulldump/biff"
 )
@@ -24,7 +25,40 @@ func getGlader(ctx context.Context) *Glader {
 	return ctx.Value("mem-test").(*Glader)
 }
 
-func TestGet(t *testing.T) {
+func TestGlader_Add(t *testing.T) {
+
+	environment(
+		func(ctx context.Context) {
+			gl := getGlader(ctx)
+
+			gl.Add("my-item", struct{ key1 string }{key1: "value1"})
+		},
+		func(ctx context.Context) {
+			gl := getGlader(ctx)
+
+			AssertEqual(gl.mem["my-item"], struct{ key1 string }{key1: "value1"})
+
+		})
+}
+
+func TestGlader_Get(t *testing.T) {
+
+	environment(
+		func(ctx context.Context) {
+			gl := getGlader(ctx)
+
+			gl.mem["my-item"] = struct{ key1 string }{key1: "value1"}
+		},
+		func(ctx context.Context) {
+			gl := getGlader(ctx)
+
+			item := gl.Get("my-item")
+			AssertEqual(item, struct{ key1 string }{key1: "value1"})
+
+		})
+}
+
+func TestGlader(t *testing.T) {
 
 	environment(
 		func(ctx context.Context) {
@@ -50,6 +84,20 @@ func TestGet(t *testing.T) {
 
 			item := gl.Get("my-item")
 			AssertEqual(item, nil)
+
+		})
+}
+
+func TestGlader_AddWithTTL(t *testing.T) {
+
+	environment(
+		func(ctx context.Context) {
+			gl := getGlader(ctx)
+
+			gl.AddWithTTL("my-item", struct{ key1 string }{key1: "value1"}, 1*time.Second)
+			AssertNotNil(gl.Get("my-item"))
+			time.Sleep(2 * time.Second)
+			AssertNil(gl.Get("my-item"))
 
 		})
 }
