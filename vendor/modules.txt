@@ -1,3 +1,0 @@
-# github.com/fulldump/biff v1.3.0
-## explicit; go 1.14
-github.com/fulldump/biff
