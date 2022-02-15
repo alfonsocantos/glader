@@ -2,7 +2,7 @@ package glader
 
 type Glader interface {
 	Get(string) interface{}
-	List() interface{}
-	Add(interface{}) error
+	List() []string
+	Add(string, interface{})
 	Delete(string) error
 }
