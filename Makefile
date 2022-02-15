@@ -4,7 +4,7 @@ GOCMD=go
 
 .PHONY: deps test bench
 
-all: test
+all: deps test
 
 deps:
 	$(GOCMD) mod tidy -v
@@ -13,7 +13,6 @@ deps:
 
 test:
 	$(GOCMD) test $(PROJECT)/... -cover
-
 
 bench:
 	$(GOCMD) test -bench=.

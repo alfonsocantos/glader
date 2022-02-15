@@ -78,17 +78,29 @@ func (g *Glader) Delete(id string) error {
 	return nil
 }
 
+func getTTL(gl *Glader, id string) time.Time {
+
+	gl.lock.Lock()
+	defer gl.lock.Unlock()
+
+	return gl.ttl[id]
+}
+
 func eraser(g *Glader) {
 
 	for {
+
 		l := g.List()
 		now := time.Now()
+
 		for _, id := range l {
-			t := g.ttl[id]
+
+			t := getTTL(g, id)
 			if now.After(t) {
 				g.Delete(id)
 			}
 		}
+
 		time.Sleep(1 * time.Second)
 	}
 
