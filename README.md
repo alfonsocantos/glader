@@ -1,6 +1,6 @@
 # g.l.a.d.er
 
-## Get, List, Add, Remove things
+## Get, List, Add, Delete things
 
 
 Just a tiny implementation of the [glader interface](interfaces.go) with a memory store.
