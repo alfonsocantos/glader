@@ -43,7 +43,7 @@ myglader.Add("my-item", item)
 
 ### Add with TTL
 
-It adds an item to the store by id, with Time To Live.
+It adds an item to the store by id, with Time To Live. To do so, use ttl glader using myglader as store
 
 ```go
 item := struct {
@@ -52,7 +52,9 @@ item := struct {
 	"field1": "my data"
 }
 
-myglader.Add("my-item", item, 1 * time.Second)
+myTTLglader := ttl.Neew(myglader, time.Second)
+
+myTTLglader.Add("my-item", item)
 ```
 
 Item will be deleted after 1 second
