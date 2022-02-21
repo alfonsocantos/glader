@@ -2,6 +2,7 @@ package memory
 
 import (
 	"context"
+	"github.com/alfonsocantos/glader/ttl"
 	"testing"
 	"time"
 
@@ -93,8 +94,9 @@ func TestGlader_AddWithTTL(t *testing.T) {
 	environment(
 		func(ctx context.Context) {
 			gl := getGlader(ctx)
+			ttlGlader := ttl.New(gl, time.Second)
 
-			gl.AddWithTTL("my-item", struct{ key1 string }{key1: "value1"}, 1*time.Second)
+			ttlGlader.Add("my-item", struct{ key1 string }{key1: "value1"})
 			AssertNotNil(gl.Get("my-item"))
 			time.Sleep(2 * time.Second)
 			AssertNil(gl.Get("my-item"))

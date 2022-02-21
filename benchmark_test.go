@@ -1,7 +1,8 @@
-package glader
+package glader_test
 
 import (
 	"github.com/alfonsocantos/glader/memory"
+	"github.com/alfonsocantos/glader/ttl"
 	"github.com/google/uuid"
 	"sync"
 	"testing"
@@ -43,14 +44,15 @@ func BenchmarkAdd(b *testing.B) {
 
 func BenchmarkAddWithTTL(b *testing.B) {
 	gl := memory.New()
+	ttlGlader := ttl.New(gl, time.Millisecond)
 	for i := 0; i < b.N; i++ {
-		gl.AddWithTTL("my-item", struct{ key1 string }{key1: "value1"}, time.Second)
+		ttlGlader.Add("my-item", struct{ key1 string }{key1: "value1"})
 	}
 }
 
 func BenchmarkCaos(b *testing.B) {
 	gl := memory.New()
-
+	ttlGlader := ttl.New(gl, time.Second)
 	data := struct {
 		field1 string
 		field2 string
@@ -97,7 +99,7 @@ func BenchmarkCaos(b *testing.B) {
 			addTTLWg.Add(1)
 			defer addTTLWg.Done()
 			for a := 0; a < 10; a++ {
-				gl.AddWithTTL(uuid.NewString(), data, time.Second)
+				ttlGlader.Add(uuid.NewString(), data)
 			}
 		}()
 
